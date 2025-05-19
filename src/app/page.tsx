@@ -10,7 +10,7 @@ export default function Home() {
   const lookingForPetInputRef = useRef<HTMLInputElement>(null);
   const foundPetInputRef = useRef<HTMLInputElement>(null);
 
-  const LAMBDA_UPLOAD_URL = 'https://find-your-pets.com/get-signed-url';
+  const LAMBDA_UPLOAD_URL = 'https://api.find-your-pets.com/get-signed-url';
 
   const handleLookingForPetClick = () => {
     lookingForPetInputRef.current?.click();
@@ -28,16 +28,39 @@ export default function Home() {
       formData.append('type', buttonType);
 
       try {
-        const response = await fetch(LAMBDA_UPLOAD_URL, {
+        // get presigned URL from lambda
+        const url = `${LAMBDA_UPLOAD_URL}?key=${file.name}&contentType=${file.type}`;
+        const response = await fetch(url, {
           method: 'GET',
-          body: formData,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': 'https://api.find-your-pets.com',
+            'Access-Control-Allow-Methods': 'GET',
+            'Access-Control-Allow-Headers': 'Content-Type',
+          },
         });
 
         if (!response.ok) {
-          throw new Error('Upload failed');
+          throw new Error('Getting presigned URL failed');
         }
 
-        await response.json();
+        // upload the file to S3 using presigned URL
+        const { signedUrl } = await response.json();
+        const uploadResponse = await fetch(signedUrl, {
+          method: 'PUT',
+          body: file,
+          headers: {
+            'Content-Type': file.type,
+          },
+        });
+        if (!uploadResponse.ok) {
+          throw new Error('Uploading file to S3 failed');
+        }
+        // handle the response from S3
+        const uploadResult = await uploadResponse.json();
+        console.log('Upload result:', uploadResult);
+
+        await uploadResponse.json();
         alert('Photo uploaded successfully!');
       } catch (error) {
         console.error(error);

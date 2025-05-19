@@ -4,7 +4,7 @@ export const runtime = 'edge';
 export async function POST(request: NextRequest) {
   if (request.method === 'OPTIONS') {
     const response = new NextResponse();
-    response.headers.set('Access-Control-Allow-Origin', 'https://find-your-pets.com');
+    response.headers.set('Access-Control-Allow-Origin', 'https://api.find-your-pets.com');
     response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
     return response;
@@ -27,12 +27,12 @@ export async function POST(request: NextRequest) {
   // log the body
   console.log('Body:', body);
 
-  const response: Response = await fetch('https://find-your-pets/get-signed-url', {
+  const response: Response = await fetch('https://api.find-your-pets/get-signed-url', {
     method: 'GET',
     body,
     headers: {
       'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': 'https://find-your-pets.com',
+      'Access-Control-Allow-Origin': 'https://api.find-your-pets.com',
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     },
