@@ -10,10 +10,42 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
   }
 
-  await fetch('https://find-your-pets/upload', {
-    method: 'POST',
-    body: formData,
+  // get signed s3 url from lambda and then upload the file to s3
+  const body = JSON.stringify({
+    filename: photo.name,
+    type: photo.type,
+    size: photo.size,
   });
+
+  // log the body
+  console.log('Body:', body);
+
+  const response = await fetch('https://find-your-pets/get-signed-url', {
+    method: 'GET',
+    body,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) {
+    return NextResponse.json({ error: 'Failed to get signed URL' }, { status: 500 });
+  }
+  const { signedUrl } = await response.json();
+  const uploadResponse = await fetch(signedUrl, {
+    method: 'PUT',
+    body: photo,
+    headers: {
+      'Content-Type': photo.type,
+    },
+  });
+  if (!uploadResponse.ok) {
+    return NextResponse.json({ error: 'Failed to upload file' }, { status: 500 });
+  }
+
+  // await fetch('https://find-your-pets/upload', {
+  //   method: 'POST',
+  //   body: formData,
+  // });
 
   return NextResponse.json({
     message: 'File received successfully',
