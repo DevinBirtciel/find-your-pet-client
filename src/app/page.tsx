@@ -1,8 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { useRef } from 'react';
 import { Button } from '@mui/material';
-import Image from 'next/image';
+// import Image from 'next/image';
 import '../app/upload.css';
 
 export default function Home() {
@@ -51,7 +52,7 @@ export default function Home() {
         <h1 className="title">Find Your Pets</h1>
         <h2 className="subtitle">Help a lost pet make its way home by uploading a photo</h2>
         <div className="fullscreen-image">
-          <Image src="/pet.jpg" alt="find-your-pets Logo" width={400} height={300} priority />
+          <img src="/pet.jpg" alt="find-your-pets Logo" />
         </div>
         <div className="button-row">
           <Button onClick={handleLookingForPetClick} variant="text" color="primary" className={'button-formatting'}>

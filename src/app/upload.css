@@ -27,12 +27,14 @@
   font-size: 3rem;
   font-weight: bold;
   color: var(--foreground);
+  text-align: center;
 }
 
 .subtitle {
   font-size: 1.5rem;
   font-weight: bold;
   color: var(--foreground);
+  text-align: center;
 }
 
 .formatting {
@@ -45,25 +47,23 @@
 }
 
 .fullscreen-image {
-  width: auto;
+  object-fit: cover;
+  width: 40vw;
+  max-width: 100%;
+  position: relative;
   height: auto;
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  max-width: 400px;
-  max-height: 300px;
-}
-
-.MuiButton-root.button-formatting {
-  margin-top: 1rem;
-  background-color: lightblue;
-  color: blue;
 }
 
 .button-row {
   display: flex;
   flex-direction: row;
   gap: 2rem;
+}
+
+.MuiButton-root.button-formatting {
+  margin-top: 1rem;
+  background-color: lightblue;
+  color: blue;
 }
 
 body {
