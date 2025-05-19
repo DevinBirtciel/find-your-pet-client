@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   --background: #ffffff;
@@ -19,11 +19,11 @@
   }
 }
 
-background-image {
+.background-image {
   background: linear-gradient(lightBlue, lightGreen);
 }
 
-formatting {
+.formatting {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
@@ -32,7 +32,7 @@ formatting {
   padding: 24px;
 }
 
-button-formatting {
+.button-formatting {
   display: flex;
   flex-direction: row;
   gap: 2rem;
