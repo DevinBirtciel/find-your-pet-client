@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('Request received:', request);
+    console.log('Request received');
     if (request.method === 'OPTIONS') {
       const response = new NextResponse();
       response.headers.set('Access-Control-Allow-Origin', 'https://api.find-your-pets.com');
@@ -10,6 +10,7 @@ export async function POST(request: NextRequest) {
       response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
       return response;
     }
+
     console.log('Processing form data');
     let formData: FormData;
     try {
@@ -20,16 +21,40 @@ export async function POST(request: NextRequest) {
     }
     const photo = formData.get('photo') as File;
     const type = formData.get('type');
-    console.log('Form data:', formData);
+
+    console.log('Form data extracted');
     if (!photo || !(photo instanceof File)) {
       return NextResponse.json({ error: 'Could not retrieve valid form data' }, { status: 400 });
     }
+
     console.log('set up buffer');
     const arrayBuffer = await photo.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // get signed s3 url from lambda and then upload the file to s3
     console.log('Getting signed URL');
+    const response: Response = await fetch(
+      `https://api.find-your-pets.com/get-signed-url?key=${photo.name}&contentType=${photo.type}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': 'https://api.find-your-pets.com',
+          'Access-Control-Allow-Methods': 'GET',
+          'Access-Control-Allow-Headers': 'Content-Type',
+        },
+      },
+    );
+    console.log('Response from signed URL:', response);
+
+    if (!response.ok) {
+      return NextResponse.json({ error: 'Failed to get signed URL' }, { status: 500 });
+    }
+
+    console.log('Extracting signed URL');
+    const { signedUrl } = await response.json();
+    console.log('Signed URL:', signedUrl);
+
+    console.log('Building body');
     const body = JSON.stringify({
       filename: photo.name,
       type: photo.type,
@@ -37,39 +62,23 @@ export async function POST(request: NextRequest) {
       buffer: buffer.toString('base64'),
     });
 
-    const response: Response = await fetch(
-      `https://api.find-your-pets/get-signed-url?key=${photo.name}&contentType=${photo.type}`,
-      {
-        method: 'GET',
-        body,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': 'https://api.find-your-pets.com',
-          'Access-Control-Allow-Methods': 'GET, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type',
-        },
+    console.log('Uploading to S3');
+    const uploadResponse = await fetch(signedUrl, {
+      method: 'PUT',
+      body,
+      headers: {
+        'Content-Type': photo.type,
+        'Access-Control-Allow-Origin': 'https://api.find-your-pets.com',
+        'Access-Control-Allow-Methods': 'PUT, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
       },
-    );
-
-    if (!response.ok) {
-      return NextResponse.json({ error: 'Failed to get signed URL' }, { status: 500 });
+    });
+    console.log('Upload response:', uploadResponse);
+    if (!uploadResponse.ok) {
+      return NextResponse.json({ error: 'Failed to upload file' }, { status: 500 });
     }
-    const { signedUrl } = await response.json();
-    console.log('Signed URL:', signedUrl);
-    // const uploadResponse = await fetch(signedUrl, {
-    //   method: 'PUT',
-    //   body: photo,
-    //   headers: {
-    //     'Content-Type': photo.type,
-    //     'Access-Control-Allow-Origin': 'https://api.find-your-pets.com',
-    //     'Access-Control-Allow-Methods': 'PUT, OPTIONS',
-    //     'Access-Control-Allow-Headers': 'Content-Type',
-    //   },
-    // });
-    // if (!uploadResponse.ok) {
-    //   return NextResponse.json({ error: 'Failed to upload file' }, { status: 500 });
-    // }
 
+    console.log('File uploaded successfully');
     return NextResponse.json({
       message: 'File received successfully',
       filename: photo.name,
