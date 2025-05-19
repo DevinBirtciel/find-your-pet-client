@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 export const runtime = 'edge';
 
 export async function POST(request: NextRequest) {
+  if (request.method === 'OPTIONS') {
+    const response = new NextResponse();
+    response.headers.set('Access-Control-Allow-Origin', 'https://find-your-pets.com');
+    response.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+    return response;
+  }
   const formData = await request.formData();
   const photo = formData.get('photo') as File;
   const type = formData.get('type');
@@ -20,13 +27,17 @@ export async function POST(request: NextRequest) {
   // log the body
   console.log('Body:', body);
 
-  const response = await fetch('https://find-your-pets/get-signed-url', {
+  const response: Response = await fetch('https://find-your-pets/get-signed-url', {
     method: 'GET',
     body,
     headers: {
       'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': 'https://find-your-pets.com',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
     },
   });
+
   if (!response.ok) {
     return NextResponse.json({ error: 'Failed to get signed URL' }, { status: 500 });
   }
@@ -41,11 +52,6 @@ export async function POST(request: NextRequest) {
   if (!uploadResponse.ok) {
     return NextResponse.json({ error: 'Failed to upload file' }, { status: 500 });
   }
-
-  // await fetch('https://find-your-pets/upload', {
-  //   method: 'POST',
-  //   body: formData,
-  // });
 
   return NextResponse.json({
     message: 'File received successfully',
