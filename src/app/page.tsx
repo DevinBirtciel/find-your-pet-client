@@ -3,7 +3,6 @@
 
 import { useRef } from 'react';
 import { Button } from '@mui/material';
-// import Image from 'next/image';
 import '../app/upload.css';
 
 export default function Home() {
@@ -37,7 +36,8 @@ export default function Home() {
           },
         });
         if (!response.ok) {
-          throw new Error('Error uploading photo.');
+          console.log('Response from uploading photo was not okay:', response);
+          throw new Error('Response from uploading photo was not okay.');
         }
         const data = await response.json();
         console.log('File uploaded successfully:', data);
