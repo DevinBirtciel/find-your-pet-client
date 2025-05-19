@@ -48,7 +48,8 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main className="background">
+      <div className="formatting">
       <Image
         src="/pet.jpg"
         alt="find-your-pets Logo"
@@ -56,7 +57,7 @@ export default function Home() {
         height={300}
         priority
       />
-      <div className="flex flex-row gap-4 mt-4">
+      <div className="button-formatting">
         <Button onClick={handleLookingForPetClick} variant="text" color="primary">
           Looking for Pet
         </Button>
@@ -77,6 +78,7 @@ export default function Home() {
           accept="image/*"
           onChange={(e) => handleFileChange(e, "found")}
         />
+      </div>
       </div>
     </main>
   );
