@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     headers: {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': 'https://api.find-your-pets.com',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     },
   });
@@ -47,6 +47,9 @@ export async function POST(request: NextRequest) {
     body: photo,
     headers: {
       'Content-Type': photo.type,
+      'Access-Control-Allow-Origin': 'https://api.find-your-pets.com',
+      'Access-Control-Allow-Methods': 'PUT, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
     },
   });
   if (!uploadResponse.ok) {

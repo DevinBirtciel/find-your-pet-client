@@ -10,8 +10,6 @@ export default function Home() {
   const lookingForPetInputRef = useRef<HTMLInputElement>(null);
   const foundPetInputRef = useRef<HTMLInputElement>(null);
 
-  const LAMBDA_UPLOAD_URL = 'https://api.find-your-pets.com/get-signed-url';
-
   const handleLookingForPetClick = () => {
     lookingForPetInputRef.current?.click();
   };
@@ -28,40 +26,22 @@ export default function Home() {
       formData.append('type', buttonType);
 
       try {
-        // get presigned URL from lambda
-        const url = `${LAMBDA_UPLOAD_URL}?key=${file.name}&contentType=${file.type}`;
-        const response = await fetch(url, {
-          method: 'GET',
+        // forward the request to the nextjs backend in upload.ts
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
           headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': 'https://api.find-your-pets.com',
-            'Access-Control-Allow-Methods': 'GET',
+            'ACCess-Control-Allow-Origin': 'https://api.find-your-pets.com',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type',
           },
         });
-
         if (!response.ok) {
-          throw new Error('Getting presigned URL failed');
+          throw new Error('Failed to upload file');
         }
-
-        // upload the file to S3 using presigned URL
-        const { signedUrl } = await response.json();
-        const uploadResponse = await fetch(signedUrl, {
-          method: 'PUT',
-          body: file,
-          headers: {
-            'Content-Type': file.type,
-          },
-        });
-        if (!uploadResponse.ok) {
-          throw new Error('Uploading file to S3 failed');
-        }
-        // handle the response from S3
-        const uploadResult = await uploadResponse.json();
-        console.log('Upload result:', uploadResult);
-
-        await uploadResponse.json();
-        alert('Photo uploaded successfully!');
+        const data = await response.json();
+        console.log('File uploaded successfully:', data);
+        alert('File uploaded successfully');
       } catch (error) {
         console.error(error);
         alert('Error uploading photo.');
