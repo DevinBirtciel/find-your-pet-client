@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { Button } from "@mui/material";
 import Image from "next/image";
+import "./upload.css";
 
 export default function Home() {
   const lookingForPetInputRef = useRef<HTMLInputElement>(null);
@@ -57,7 +58,7 @@ export default function Home() {
         height={300}
         priority
       />
-      <div className="button-formatting">
+      <div className={"button-formatting"}>
         <Button onClick={handleLookingForPetClick} variant="text" color="primary">
           Looking for Pet
         </Button>
