@@ -20,7 +20,19 @@
 }
 
 .background-image {
-  background: linear-gradient(lightBlue, lightGreen);
+  background: linear-gradient(lightBlue, blue);
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: bold;
+  color: var(--foreground);
+}
+
+.subtitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--foreground);
 }
 
 .formatting {
@@ -28,16 +40,28 @@
   min-height: 100vh;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   padding: 24px;
 }
 
-.button-formatting {
+.fullscreen-image {
+  width: 30vw;
+  height: 30vh;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
+.MuiButton-root.button-formatting {
+  margin-top: 1rem;
+  background-color: lightblue;
+  color: blue;
+}
+
+.button-row {
   display: flex;
   flex-direction: row;
   gap: 2rem;
-  margin-top: 1rem;
-  border: 2px solid blue;
 }
 
 body {
