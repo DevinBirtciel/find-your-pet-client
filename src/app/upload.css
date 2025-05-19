@@ -45,11 +45,13 @@
 }
 
 .fullscreen-image {
-  width: 30vw;
-  height: 30vh;
+  width: auto;
+  height: auto;
   align-items: center;
   justify-content: center;
   display: flex;
+  max-width: 400px;
+  max-height: 300px;
 }
 
 .MuiButton-root.button-formatting {
