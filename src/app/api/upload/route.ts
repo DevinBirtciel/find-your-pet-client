@@ -27,34 +27,38 @@ export async function POST(request: NextRequest) {
   // log the body
   console.log('Body:', body);
 
-  const response: Response = await fetch('https://api.find-your-pets/get-signed-url', {
-    method: 'GET',
-    body,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': 'https://api.find-your-pets.com',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+  const response: Response = await fetch(
+    `https://api.find-your-pets/get-signed-url?key=${photo.name}&contentType=${photo.type}`,
+    {
+      method: 'GET',
+      body,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': 'https://api.find-your-pets.com',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
     },
-  });
+  );
 
   if (!response.ok) {
     return NextResponse.json({ error: 'Failed to get signed URL' }, { status: 500 });
   }
   const { signedUrl } = await response.json();
-  const uploadResponse = await fetch(signedUrl, {
-    method: 'PUT',
-    body: photo,
-    headers: {
-      'Content-Type': photo.type,
-      'Access-Control-Allow-Origin': 'https://api.find-your-pets.com',
-      'Access-Control-Allow-Methods': 'PUT, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
-  });
-  if (!uploadResponse.ok) {
-    return NextResponse.json({ error: 'Failed to upload file' }, { status: 500 });
-  }
+  console.log('Signed URL:', signedUrl);
+  // const uploadResponse = await fetch(signedUrl, {
+  //   method: 'PUT',
+  //   body: photo,
+  //   headers: {
+  //     'Content-Type': photo.type,
+  //     'Access-Control-Allow-Origin': 'https://api.find-your-pets.com',
+  //     'Access-Control-Allow-Methods': 'PUT, OPTIONS',
+  //     'Access-Control-Allow-Headers': 'Content-Type',
+  //   },
+  // });
+  // if (!uploadResponse.ok) {
+  //   return NextResponse.json({ error: 'Failed to upload file' }, { status: 500 });
+  // }
 
   return NextResponse.json({
     message: 'File received successfully',

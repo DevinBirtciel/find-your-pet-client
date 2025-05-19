@@ -37,7 +37,7 @@ export default function Home() {
           },
         });
         if (!response.ok) {
-          throw new Error('Failed to upload file');
+          throw new Error('Error uploading photo.');
         }
         const data = await response.json();
         console.log('File uploaded successfully:', data);
