@@ -10,7 +10,7 @@ export default function Home() {
   const lookingForPetInputRef = useRef<HTMLInputElement>(null);
   const foundPetInputRef = useRef<HTMLInputElement>(null);
 
-  const LAMBDA_UPLOAD_URL = 'https://find-your-pets/upload';
+  const LAMBDA_UPLOAD_URL = 'https://find-your-pets.com/get-signed-url';
 
   const handleLookingForPetClick = () => {
     lookingForPetInputRef.current?.click();
@@ -29,7 +29,7 @@ export default function Home() {
 
       try {
         const response = await fetch(LAMBDA_UPLOAD_URL, {
-          method: 'POST',
+          method: 'GET',
           body: formData,
         });
 
