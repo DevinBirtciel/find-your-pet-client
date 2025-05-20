@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
     console.log('set up buffer');
     const arrayBuffer = await photo.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
+    console.log('Is buffer binary?', Buffer.isBuffer(buffer));
 
     console.log('Getting signed URL', photo.name, photo.type);
     const key = encodeURIComponent(photo.name);
@@ -51,27 +52,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to get signed URL' }, { status: 500 });
     }
 
-    console.log('Extracting signed URL');
-    const { signedUrl } = await response.json();
+    console.log('Extracting signed URL', response);
+    const { url: signedUrl } = await response.json();
     console.log('Signed URL:', signedUrl);
-
-    console.log('Building body');
-    const body = JSON.stringify({
-      filename: photo.name,
-      type: photo.type,
-      size: photo.size,
-      buffer: buffer.toString('base64'),
-    });
 
     console.log('Uploading to S3');
     const uploadResponse = await fetch(signedUrl, {
       method: 'PUT',
-      body,
+      body: buffer,
       headers: {
         'Content-Type': photo.type,
-        'Access-Control-Allow-Origin': 'https://api.find-your-pets.com',
-        'Access-Control-Allow-Methods': 'PUT, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
       },
     });
     console.log('Upload response:', uploadResponse);
