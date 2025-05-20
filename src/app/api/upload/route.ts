@@ -31,9 +31,11 @@ export async function POST(request: NextRequest) {
     const arrayBuffer = await photo.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    console.log('Getting signed URL');
+    console.log('Getting signed URL', photo.name, photo.type);
+    const key = encodeURIComponent(photo.name);
+    const contentType = encodeURIComponent(photo.type);
     const response: Response = await fetch(
-      `https://api.find-your-pets.com/get-signed-url?key=${photo.name}&contentType=${photo.type}`,
+      `https://api.find-your-pets.com/get-signed-url?key=${key}&contentType=${contentType}`,
       {
         method: 'GET',
         headers: {
