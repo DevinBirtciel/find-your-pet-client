@@ -34,18 +34,17 @@ export async function POST(request: NextRequest) {
     console.log('Getting signed URL', photo.name, photo.type);
     const key = encodeURIComponent(photo.name);
     const contentType = encodeURIComponent(photo.type);
-    const response: Response = await fetch(
-      `https://api.find-your-pets.com/get-signed-url?key=${key}&contentType=${contentType}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': 'https://api.find-your-pets.com',
-          'Access-Control-Allow-Methods': 'GET',
-          'Access-Control-Allow-Headers': 'Content-Type',
-        },
+    const url = `https://api.find-your-pets.com/get-signed-url?key=${key}&contentType=${contentType}`;
+    console.log('url', url);
+    const response: Response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': 'https://api.find-your-pets.com',
+        'Access-Control-Allow-Methods': 'GET',
+        'Access-Control-Allow-Headers': 'Content-Type',
       },
-    );
+    });
     console.log('Response from signed URL:', response);
 
     if (!response.ok) {
